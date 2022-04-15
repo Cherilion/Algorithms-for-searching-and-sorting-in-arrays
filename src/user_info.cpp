@@ -48,8 +48,11 @@ void sortBy(const string& field_name, vector<userInfo>* _usersInfo) {
 
     vector<userInfo> &_usersInfoRef = *_usersInfo;
 
+
+    //several variants of sorting methods:
     //sort(_usersInfo->begin(), _usersInfo->end(), it->second);
-    quickSort(_usersInfoRef, make_pair(0, _usersInfoRef.size() -  1), it->second);
+    selectionSort(_usersInfoRef, make_pair(0, _usersInfoRef.size() -  1), it->second);
+    //quickSort(_usersInfoRef, make_pair(0, _usersInfoRef.size() -  1), it->second);
 }
 
 
@@ -65,11 +68,11 @@ int partition(vector<T>& _structVec, pr_t _limits, usersComparator comp)
             count++;
     }
 
-    // Giving pivot element its correct position
+
     int _pivotIndex = _limits.first + count;
     swap(_structVec.at(_pivotIndex), _structVec.at(_limits.first));
 
-    // Sorting left and right parts of the pivot element
+
     int i = _limits.first, j = _limits.second;
 
     while (i < _pivotIndex && j > _pivotIndex) {
@@ -104,4 +107,21 @@ void quickSort(vector<T>& vec, pr_t limits, usersComparator comp)
 
     if(limits.second > pivotIndex)
     quickSort(vec, make_pair(pivotIndex + 1, limits.second), comp);
+}
+
+
+template <typename T>
+void selectionSort(vector<T>& _vec, pr_t limits, usersComparator comp)
+{
+    int min;
+    for (int i = limits.first; i <= limits.second; i++)
+    {
+        min = i;
+        for (int j = i + 1; j <= limits.second; j++)
+        {
+            if (!comp(_vec.at(j), _vec.at(min)))
+                min = j;
+        }
+        swap(_vec.at(min), _vec.at(i));
+    }
 }

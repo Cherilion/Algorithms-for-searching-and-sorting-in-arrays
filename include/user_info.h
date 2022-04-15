@@ -41,4 +41,7 @@ int partition(vector<T>&, pr_t, usersComparator);
 template <typename T>
 void quickSort(vector<T>&, pr_t, usersComparator);
 
+template <typename T>
+void selectionSort(vector<T>&, pr_t, usersComparator);
+
 #endif //LAB2_USER_INFO_H
