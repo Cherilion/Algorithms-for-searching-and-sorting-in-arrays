@@ -54,52 +54,54 @@ void sortBy(const string& field_name, vector<userInfo>* _usersInfo) {
 
 
 template <typename T>
-int partition(vector<T>& _structVec, pr_t startStop, usersComparator comp)
+int partition(vector<T>& _structVec, pr_t _limits, usersComparator comp)
 {
 
-    int pivot = startStop.first;
+    int pivot = _limits.first;
 
     int count = 0;
-    for (int i = startStop.first + 1; i <= startStop.second; i++) {
+    for (int i = _limits.first + 1; i <= _limits.second; i++) {
         if (!comp(_structVec.at(i), _structVec.at(pivot)))
             count++;
     }
 
     // Giving pivot element its correct position
-    int pivotIndex = startStop.first + count;
-    swap(_structVec.at(pivotIndex), _structVec.at(startStop.first));
+    int _pivotIndex = _limits.first + count;
+    swap(_structVec.at(_pivotIndex), _structVec.at(_limits.first));
 
     // Sorting left and right parts of the pivot element
-    int i = startStop.first, j = startStop.second;
+    int i = _limits.first, j = _limits.second;
 
-    while (i < pivotIndex && j > pivotIndex) {
+    while (i < _pivotIndex && j > _pivotIndex) {
 
-        while (comp(_structVec.at(i), _structVec.at(pivot))) {
+        while (!comp(_structVec.at(i), _structVec.at(_pivotIndex))) {
             i++;
         }
 
-        while (!comp(_structVec.at(i), _structVec.at(pivot))) {
+        while (comp(_structVec.at(j), _structVec.at(_pivotIndex))) {
             j--;
         }
 
-        if (i < pivotIndex && j > pivotIndex) {
+        if (i < _pivotIndex && j > _pivotIndex) {
             swap(_structVec.at(i++), _structVec.at(j--));
         }
     }
 
-    return pivotIndex;
+    return _pivotIndex;
 }
 
 template <typename T>
-void quickSort(vector<T>& vec, pr_t startStop, usersComparator comp)
+void quickSort(vector<T>& vec, pr_t limits, usersComparator comp)
 {
 
-    if (startStop.first >= startStop.second)
+    if (limits.first >= limits.second)
         return;
 
-    int p = partition(vec, startStop, comp);
+    int pivotIndex = partition(vec, limits, comp);
 
-    quickSort(vec, make_pair(startStop.first, p - 1), comp);
+    if(limits.first < pivotIndex)
+    quickSort(vec, make_pair(limits.first, pivotIndex - 1), comp);
 
-    quickSort(vec, make_pair(p + 1, startStop.second), comp);
+    if(limits.second > pivotIndex)
+    quickSort(vec, make_pair(pivotIndex + 1, limits.second), comp);
 }
