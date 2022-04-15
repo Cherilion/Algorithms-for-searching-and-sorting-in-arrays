@@ -1,3 +1,4 @@
+#include <adoint.h>
 #include "include/user_info.h"
 #include "include/fileTools.h"
 
@@ -41,8 +42,8 @@ void sortBy(const string& field_name, vector<userInfo>* _usersInfo) {
             {"phoneNumber1", comparator(&userInfo::phoneNumber1)},
             {"phoneNumber2", comparator(&userInfo::phoneNumber2)}
     };
-    auto it = comparators.find(field_name);
-    if (it == comparators.end()) {
+    auto itComp = comparators.find(field_name);
+    if (itComp == comparators.end()) {
         throw invalid_argument("Invalid value for 'field_name'.");
     }
 
@@ -50,9 +51,9 @@ void sortBy(const string& field_name, vector<userInfo>* _usersInfo) {
 
 
     //several variants of sorting methods:
-    //sort(_usersInfo->begin(), _usersInfo->end(), it->second);
-    selectionSort(_usersInfoRef, make_pair(0, _usersInfoRef.size() -  1), it->second);
-    //quickSort(_usersInfoRef, make_pair(0, _usersInfoRef.size() -  1), it->second);
+    //sort(_usersInfo->begin(), _usersInfo->end(), itComp->second);
+    selectionSort(_usersInfoRef, make_pair(0, _usersInfoRef.size() -  1), itComp->second);
+    //quickSort(_usersInfoRef, make_pair(0, _usersInfoRef.size() -  1), itComp->second);
 }
 
 
@@ -94,34 +95,67 @@ int partition(vector<T>& _structVec, pr_t _limits, usersComparator comp)
 }
 
 template <typename T>
-void quickSort(vector<T>& vec, pr_t limits, usersComparator comp)
+void quickSort(vector<T>& _vec, pr_t _limits, usersComparator _comp)
 {
 
-    if (limits.first >= limits.second)
+    if (_limits.first >= _limits.second)
         return;
 
-    int pivotIndex = partition(vec, limits, comp);
+    int pivotIndex = partition(_vec, _limits, _comp);
 
-    if(limits.first < pivotIndex)
-    quickSort(vec, make_pair(limits.first, pivotIndex - 1), comp);
+    if(_limits.first < pivotIndex)
+    quickSort(_vec, make_pair(_limits.first, pivotIndex - 1), _comp);
 
-    if(limits.second > pivotIndex)
-    quickSort(vec, make_pair(pivotIndex + 1, limits.second), comp);
+    if(_limits.second > pivotIndex)
+    quickSort(_vec, make_pair(pivotIndex + 1, _limits.second), _comp);
 }
 
 
 template <typename T>
-void selectionSort(vector<T>& _vec, pr_t limits, usersComparator comp)
+void selectionSort(vector<T>& _vec, pr_t _limits, usersComparator _comp)
 {
     int min;
-    for (int i = limits.first; i <= limits.second; i++)
+    for (int i = _limits.first; i <= _limits.second; i++)
     {
         min = i;
-        for (int j = i + 1; j <= limits.second; j++)
+        for (int j = i + 1; j <= _limits.second; j++)
         {
-            if (!comp(_vec.at(j), _vec.at(min)))
+            if (!_comp(_vec.at(j), _vec.at(min)))
                 min = j;
         }
         swap(_vec.at(min), _vec.at(i));
     }
+}
+
+
+bool comparatorCityName(userInfo _userInfo, string _cityName){
+    return _userInfo.cityName > _cityName;
+}
+
+bool equalTesterCityName(userInfo _userInfo, string _cityName){
+    return _userInfo.cityName == _cityName;
+}
+
+int searchCity(string _searchValue, vector<userInfo>& _vec){
+        int result =  binarySearch(_vec, _searchValue, make_pair(0, _vec.size() - 1));
+        if(result == -1){
+            throw "Not found value!";
+        }
+        return result;
+}
+
+int binarySearch(vector<userInfo>& _vec, string sValue, pr_t _limits){
+    while(_limits.first <= _limits.second){
+        int middleIndex = (_limits.first + _limits.second) / 2;
+        if(equalTesterCityName(_vec.at(middleIndex), sValue)){
+            return middleIndex;
+        }
+        if(!comparatorCityName(_vec.at(middleIndex), sValue)){
+            _limits.first = middleIndex + 1;
+        }
+        else{
+            _limits.second = middleIndex - 1;
+        }
+    }
+    return -1;
 }

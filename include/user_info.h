@@ -33,7 +33,7 @@ typedef function<bool(const userInfo&, const userInfo&)> usersComparator;
 template <typename T, typename Field>
 function<bool(const T&, const T&)> comparator(Field T::* field);
 
-void sortBy(const std::string& field_name, std::vector<userInfo>* );
+void sortBy(const std::string& field_name, std::vector<userInfo>*);
 
 template <typename T>
 int partition(vector<T>&, pr_t, usersComparator);
@@ -43,5 +43,12 @@ void quickSort(vector<T>&, pr_t, usersComparator);
 
 template <typename T>
 void selectionSort(vector<T>&, pr_t, usersComparator);
+
+
+
+bool comparatorCityName(userInfo, string);
+bool equalTesterCityName(userInfo, string);
+int searchCity(string _searchValue, vector<userInfo>& _vec);
+int binarySearch(vector<userInfo>&, string, pr_t);
 
 #endif //LAB2_USER_INFO_H

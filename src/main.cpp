@@ -19,7 +19,8 @@ int main()
         usersData.push_back(tempUser);
     }
 
-    sortBy("callDuration", &usersData);
+    //sortBy("callDuration", &usersData);
+    cout << searchCity("Moscow", usersData) << endl;
 
     fin.close();
     system("pause");
