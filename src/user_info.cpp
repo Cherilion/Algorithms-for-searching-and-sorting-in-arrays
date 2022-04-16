@@ -125,3 +125,36 @@ void selectionSort(vector<T>& _vec, pr_t limits, usersComparator comp)
         swap(_vec.at(min), _vec.at(i));
     }
 }
+
+
+bool comparatorCityName(userInfo _userInfo, string _cityName){
+    return _userInfo.cityName > _cityName;
+}
+
+bool equalTesterCityName(userInfo _userInfo, string _cityName){
+    return _userInfo.cityName == _cityName;
+}
+
+int searchCity(string _searchValue, vector<userInfo>& _vec){
+    int result =  binarySearch(_vec, _searchValue, make_pair(0, _vec.size() - 1));
+    if(result == -1){
+        throw "Not found value!";
+    }
+    return result;
+}
+
+int binarySearch(vector<userInfo>& _vec, string sValue, pr_t _limits){
+    while(_limits.first <= _limits.second){
+        int middleIndex = (_limits.first + _limits.second) / 2;
+        if(equalTesterCityName(_vec.at(middleIndex), sValue)){
+            return middleIndex;
+        }
+        if(!comparatorCityName(_vec.at(middleIndex), sValue)){
+            _limits.first = middleIndex + 1;
+        }
+        else{
+            _limits.second = middleIndex - 1;
+        }
+    }
+    return -1;
+}

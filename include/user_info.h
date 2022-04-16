@@ -44,4 +44,10 @@ void quickSort(vector<T>&, pr_t, usersComparator);
 template <typename T>
 void selectionSort(vector<T>&, pr_t, usersComparator);
 
+
+bool comparatorCityName(userInfo, string);
+bool equalTesterCityName(userInfo, string);
+int searchCity(string _searchValue, vector<userInfo>& _vec);
+int binarySearch(vector<userInfo>&, string, pr_t);
+
 #endif //LAB2_USER_INFO_H
