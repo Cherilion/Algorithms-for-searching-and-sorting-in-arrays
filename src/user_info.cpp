@@ -48,58 +48,113 @@ void sortBy(const string& field_name, vector<userInfo>* _usersInfo) {
 
     vector<userInfo> &_usersInfoRef = *_usersInfo;
 
+
+    //several variants of sorting methods:
     //sort(_usersInfo->begin(), _usersInfo->end(), it->second);
-    quickSort(_usersInfoRef, make_pair(0, _usersInfoRef.size() -  1), it->second);
+    selectionSort(_usersInfoRef, make_pair(0, _usersInfoRef.size() -  1), it->second);
+    //quickSort(_usersInfoRef, make_pair(0, _usersInfoRef.size() -  1), it->second);
 }
 
 
 template <typename T>
-int partition(vector<T>& _structVec, pr_t startStop, usersComparator comp)
+int partition(vector<T>& _structVec, pr_t _limits, usersComparator comp)
 {
 
-    int pivot = startStop.first;
+    int pivot = _limits.first;
 
     int count = 0;
-    for (int i = startStop.first + 1; i <= startStop.second; i++) {
+    for (int i = _limits.first + 1; i <= _limits.second; i++) {
         if (!comp(_structVec.at(i), _structVec.at(pivot)))
             count++;
     }
 
-    // Giving pivot element its correct position
-    int pivotIndex = startStop.first + count;
-    swap(_structVec.at(pivotIndex), _structVec.at(startStop.first));
 
-    // Sorting left and right parts of the pivot element
-    int i = startStop.first, j = startStop.second;
+    int _pivotIndex = _limits.first + count;
+    swap(_structVec.at(_pivotIndex), _structVec.at(_limits.first));
 
-    while (i < pivotIndex && j > pivotIndex) {
 
-        while (comp(_structVec.at(i), _structVec.at(pivot))) {
+    int i = _limits.first, j = _limits.second;
+
+    while (i < _pivotIndex && j > _pivotIndex) {
+
+        while (!comp(_structVec.at(i), _structVec.at(_pivotIndex))) {
             i++;
         }
 
-        while (!comp(_structVec.at(i), _structVec.at(pivot))) {
+        while (comp(_structVec.at(j), _structVec.at(_pivotIndex))) {
             j--;
         }
 
-        if (i < pivotIndex && j > pivotIndex) {
+        if (i < _pivotIndex && j > _pivotIndex) {
             swap(_structVec.at(i++), _structVec.at(j--));
         }
     }
 
-    return pivotIndex;
+    return _pivotIndex;
 }
 
 template <typename T>
-void quickSort(vector<T>& vec, pr_t startStop, usersComparator comp)
+void quickSort(vector<T>& vec, pr_t limits, usersComparator comp)
 {
 
-    if (startStop.first >= startStop.second)
+    if (limits.first >= limits.second)
         return;
 
-    int p = partition(vec, startStop, comp);
+    int pivotIndex = partition(vec, limits, comp);
 
-    quickSort(vec, make_pair(startStop.first, p - 1), comp);
+    if(limits.first < pivotIndex)
+    quickSort(vec, make_pair(limits.first, pivotIndex - 1), comp);
 
-    quickSort(vec, make_pair(p + 1, startStop.second), comp);
+    if(limits.second > pivotIndex)
+    quickSort(vec, make_pair(pivotIndex + 1, limits.second), comp);
+}
+
+
+template <typename T>
+void selectionSort(vector<T>& _vec, pr_t limits, usersComparator comp)
+{
+    int min;
+    for (int i = limits.first; i <= limits.second; i++)
+    {
+        min = i;
+        for (int j = i + 1; j <= limits.second; j++)
+        {
+            if (!comp(_vec.at(j), _vec.at(min)))
+                min = j;
+        }
+        swap(_vec.at(min), _vec.at(i));
+    }
+}
+
+
+bool comparatorCityName(userInfo _userInfo, string _cityName){
+    return _userInfo.cityName > _cityName;
+}
+
+bool equalTesterCityName(userInfo _userInfo, string _cityName){
+    return _userInfo.cityName == _cityName;
+}
+
+int searchCity(string _searchValue, vector<userInfo>& _vec){
+    int result =  binarySearch(_vec, _searchValue, make_pair(0, _vec.size() - 1));
+    if(result == -1){
+        throw "Not found value!";
+    }
+    return result;
+}
+
+int binarySearch(vector<userInfo>& _vec, string sValue, pr_t _limits){
+    while(_limits.first <= _limits.second){
+        int middleIndex = (_limits.first + _limits.second) / 2;
+        if(equalTesterCityName(_vec.at(middleIndex), sValue)){
+            return middleIndex;
+        }
+        if(!comparatorCityName(_vec.at(middleIndex), sValue)){
+            _limits.first = middleIndex + 1;
+        }
+        else{
+            _limits.second = middleIndex - 1;
+        }
+    }
+    return -1;
 }
